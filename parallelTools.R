@@ -9,7 +9,8 @@ generateListSubproc <- function(file){
 
 #update a list of host and running proc
 checkHost <- function(listsubproc){
-    for(busy in which(!sapply(listsubproc,"[[","free"))){
+    #for(busy in which(!sapply(listsubproc,"[[","free"))){
+    for(busy in seq_along(listsubproc)){
         sp=listsubproc[[busy]]
         if(file.exists(sp$file)){
             print(paste("experiment:",sp$file,"on host",sp$host,"ended. proc freed"))
