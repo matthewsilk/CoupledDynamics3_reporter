@@ -18,6 +18,7 @@ params2<-read.csv(paste0(path0,"fullparams.csv"))
 params2<-params2[,2:ncol(params2)]
 
 tparams2<-params2[ind,]
+rm(params2)
 
 net_params<-read.csv(paste0(path0,"network_params.csv"))
 
