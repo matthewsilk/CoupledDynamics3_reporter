@@ -1,10 +1,14 @@
-library(rlist)
+old <- Sys.time() 
+#library(rlist)
 library(igraph)
 library(boot)
 
-path0<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/"
-path1<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/networks2/"
-path2<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/results/"
+args=commandArgs(trailingOnly = TRUE) #pass name of the file with arguments
+ind=args[1] #first argument is the line to be read in the file storing the parameters.
+
+path0<-""
+path1<-"networks2/"
+path2<-"results/"
 
 source(paste0(path0,"FunctionsForPaper4.R"))
 source(paste0(path0,"community_testing_func.R"))
@@ -13,7 +17,7 @@ params1<-read.csv(paste0(path0,"model_params.csv"))
 params2<-read.csv(paste0(path0,"fullparams.csv"))
 params2<-params2[,2:ncol(params2)]
 
-tparams2<-params2[1,]
+tparams2<-params2[ind,]
 
 net_params<-read.csv(paste0(path0,"network_params.csv"))
 
@@ -160,6 +164,7 @@ progression[1,]<-colSums(status)
 
 ############################################
 
+print(paste0("start expe ", ind))
 #be ready to change the network in this
 for(t in 2:time){
   
@@ -215,13 +220,16 @@ for(t in 2:time){
     
     dis<-infection_timestep(pop_info=pop_info,status=statuses[[t-1]],net=dis_mat,d_exp=dis[[2]],d_inf1=dis[[3]],d_inf2=dis[[4]],d_inf3=dis[[5]],S_E=S_E,E_I1=E_I1,yI1_I2=yI1_I2,oI1_I2=oI1_I2,yI2_I3=yI2_I3,oI2_I3=oI2_I3,yI3_D=yI3_D,oI3_D=oI3_D,yI1_R=yI1_R,oI1_R=oI1_R,yI2_R=yI2_R,oI2_R=oI2_R,yI3_R=yI3_R,oI3_R=oI3_R)
   }
-  print(colSums(dis$status))
+  #print(colSums(dis$status))
   progression[t,]<-colSums(dis$status)
   statuses[[t]]<-dis$status
   
   if(sum(colSums(statuses[[t]])[c(2,3,4,5)])==0){break()}
   
 }
+
+print(paste("end expe", ind, " at time step:",t, "with SEIRD last count:"))
+print(colSums(dis$status))
 
 
 ########################################
@@ -259,19 +267,21 @@ saveRDS(OUT, paste0(path2,tparams2$id,".RDS"))
 ###################################
 ###################################
 
-cols=c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499")
+#cols=c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499")
+#
+#plot(NULL,xlim=c(0,250),ylim=c(0,1))
+#for(i in 1:10){
+#  lines(x=seq(1,length(concern)),y=mod_concerns[i,],col=cols[i],lwd=3)
+#}
+#
+#plot(NULL,xlim=c(0,250),ylim=c(0,50))
+#for(i in 1:10){
+#  lines(x=seq(1,length(statuses)),y=mod_infs[i,],col=cols[i],lwd=3)
+#}
 
-plot(NULL,xlim=c(0,250),ylim=c(0,1))
-for(i in 1:10){
-  lines(x=seq(1,length(concern)),y=mod_concerns[i,],col=cols[i],lwd=3)
-}
 
-plot(NULL,xlim=c(0,250),ylim=c(0,50))
-for(i in 1:10){
-  lines(x=seq(1,length(statuses)),y=mod_infs[i,],col=cols[i],lwd=3)
-}
-
-
+new <- Sys.time() - old # calculate difference
+print(new) # print in nice format
 
 
 
