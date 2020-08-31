@@ -205,20 +205,25 @@ for(t in 2:time){
     
     inf<-cbind(sign(statuses[[t-1]]$I2+statuses[[t-1]]$I3),sign(statuses[[t-1]]$I2+statuses[[t-1]]$I3))
     
-    if(t==3){
-      repo<-reporter(statuses=statuses,t2=t,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=rep(0,pop_info$pop),tn=rep(0,pop_info$pop),td=rep(0,pop_info$pop),trd=rep(0,pop_info$pop))
+
+    if(t<(tparams2$delay+2) )
+        incs <- rep(0,pop_info$size/length(unique(pop_info$comms)))
+    if(t==(tparams2$delay+2) ){
+        repo<-reporter(statuses=statuses,t2=t,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=rep(0,pop_info$pop),tn=rep(0,pop_info$pop),td=rep(0,pop_info$pop),trd=rep(0,pop_info$pop))
+        incs <- repo$incs
     }
-    if(t>3){
-      repo<-reporter(statuses=statuses,t=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
+    if(t>(tparams2$delay+2)){
+        repo<-reporter(statuses=statuses,t=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
+        incs <- repo$incs
     }
-    
+
     current<-concern_timestepN(pop_info=pop_info,net_b=info_mat,net_d=dis_mat,belief=current[[1]],
-                              concern=current[[2]],inf=inf,lA_ex,lB_ex,l_conc,l_conc_o,l_inf,
-                              l_inf_o,l_hea,l_hea_o,p_inf=p_inf,incs=repo$incs)
-    
+                               concern=current[[2]],inf=inf,lA_ex,lB_ex,l_conc,l_conc_o,l_inf,
+                               l_inf_o,l_hea,l_hea_o,p_inf=p_inf,incs=incs)
+
     belief[[t]]<-current[[1]]
     concern[[t]]<-current[[2]]  
-    
+
     dis<-infection_timestep(pop_info=pop_info,status=statuses[[t-1]],net=dis_mat,d_exp=dis[[2]],d_inf1=dis[[3]],d_inf2=dis[[4]],d_inf3=dis[[5]],S_E=S_E,E_I1=E_I1,yI1_I2=yI1_I2,oI1_I2=oI1_I2,yI2_I3=yI2_I3,oI2_I3=oI2_I3,yI3_D=yI3_D,oI3_D=oI3_D,yI1_R=yI1_R,oI1_R=oI1_R,yI2_R=yI2_R,oI2_R=oI2_R,yI3_R=yI3_R,oI3_R=oI3_R)
   }
   #print(colSums(dis$status))
