@@ -17,7 +17,7 @@ for(ind in 1:518400){
 
     print("=====================================================")
     print(outputname)
-    print(paste0("expe line:",ind, "id:",i))
+    print(paste0("expe line:",ind, ", id:",i))
 
 
     while(length(which(sapply(listsubproc,"[[","free")))<1){
