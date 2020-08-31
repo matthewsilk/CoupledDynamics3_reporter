@@ -202,7 +202,7 @@ for(t in 2:time){
     
 
     if(t<(tparams2$delay+2) )
-        incs <- rep(0,pop_info$size/length(unique(pop_info$comms)))
+		incs <- rep(0,pop_info$pop/length(unique(pop_info$comms)))
     if(t==(tparams2$delay+2) ){
         repo<-reporter(statuses=statuses,t2=t,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=rep(0,pop_info$pop),tn=rep(0,pop_info$pop),td=rep(0,pop_info$pop),trd=rep(0,pop_info$pop))
         incs <- repo$incs
