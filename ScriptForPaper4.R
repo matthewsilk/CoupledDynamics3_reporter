@@ -2,9 +2,9 @@ library(rlist)
 library(igraph)
 library(boot)
 
-path0<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/"
-path1<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/networks2/"
-path2<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/results/"
+path0<-""
+path1<-"networks2/"
+path2<-"results/"
 
 source(paste0(path0,"FunctionsForPaper4.R"))
 #source(paste0(path0,"community_testing_func.R"))
@@ -13,6 +13,7 @@ params1<-read.csv(paste0(path0,"model_params.csv"))
 params2<-read.csv(paste0(path0,"fullparams.csv"))
 params2<-params2[,2:ncol(params2)]
 
+tparams2<-params2[1,]
 rm(params2) #to save space in memory when multiple instance of the script are load - usefull for the parallel version of this script
 
 net_params<-read.csv(paste0(path0,"network_params.csv"))
