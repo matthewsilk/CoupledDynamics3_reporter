@@ -1,12 +1,12 @@
-# CoupledDynamics3_reporter
+# CoupledDynamics3_reporter parallel version
 
-To run on simulation with a givent set of parameters:
+To run on simulation with a given set of parameters:
 
 ```bash
-Rsccript ScriptForPaper4.R 3
+Rscript ScriptForPaper4.R 3
 ```
 
-this will run the simulation with the parameter described at the line 3 of `fullparams.csv`:
+This will run the simulation with the parameter described at the line 3 of `fullparams.csv`, which are:
 
 ```
 "","id","net","start","SC","AW","RE","p_inf","level","type","mPps","Ps","Ph","Pd","Pr","Prd","delay","hc","eff","rep"
@@ -14,3 +14,7 @@ this will run the simulation with the parameter described at the line 3 of `full
 ```
 
 You can then use `parallelExecution.R` to loop over all lines of the file and send that to list of host defined in the file `hostandprocs.csv`
+
+```bash
+Rscript parallelExecution.R > logAllruns #this logfile can be very big! 
+```
