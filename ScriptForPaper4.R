@@ -7,6 +7,7 @@ path1<-"networks2/"
 path2<-"results/"
 
 source(paste0(path0,"FunctionsForPaper4.R"))
+source(paste0(path0,"new_reporter.R"))
 #source(paste0(path0,"community_testing_func.R"))
 
 params1<-read.csv(paste0(path0,"model_params.csv"))
