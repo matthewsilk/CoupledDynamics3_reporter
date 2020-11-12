@@ -3,7 +3,7 @@
 To run on simulation with a given set of parameters:
 
 ```bash
-Rscript ScriptForPaper4.R 3
+Rscript ScriptForPaper4.R 3 expname
 ```
 
 This will run the simulation with the parameter described at the line 3 of `fullparams.csv`, which are:
@@ -13,8 +13,10 @@ This will run the simulation with the parameter described at the line 3 of `full
 "3",3,3,0.2,0.1,0.1,-0.075,1,"comm","C",0.2,0.25,1,1,1,0.75,1,20,0.001,1
 ```
 
-You can then use `parallelExecution.R` to loop over all lines of the file and send that to list of host defined in the file `hostandprocs.csv`
+And store the result of this experiment in the folder `expname/` in an RDS file : `expname/3.RDS`
+
+You can then use `parallelExecution.R` to loop over all lines of the file and send that to list of host defined in the file `hostandprocs.csv`, all results will be stored in the folder `expname/`.
 
 ```bash
-Rscript parallelExecution.R > logAllruns #this logfile can be very big! 
+Rscript parallelExecution.R expname > logAllruns #this logfile can be very big! 
 ```

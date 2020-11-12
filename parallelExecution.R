@@ -1,8 +1,12 @@
 old <- Sys.time() 
 source("parallelTools.R")
 
+args=commandArgs(trailingOnly = TRUE) #pass name of the file with arguments
+expname=args[1] #first argument is the line to be read in the file storing the parameters.
+
 listsubproc=generateListSubproc("hostandprocs.csv")
-folder_res="results" #folder where all results will be store, should be the same than the one used in ScriptForPaper4.R
+folder_res=expname #folder where all results will be store, should be the same than the one used in ScriptForPaper4.R, should pass that by arguments to both this script and ScriptForPaper4.R script
+dir.create(folder_res, showWarnings = FALSE)
 p=read.csv("fullparams.csv")
 ids=p$id
 rm(p)
@@ -34,7 +38,7 @@ for(ind in 1:518400){
         listsubproc[[freehost]]$file=outputname
         listsubproc[[freehost]]$free=FALSE
 
-        cmd=paste0('ssh ',listsubproc[[freehost]]$host,' "cd ',getwd(),'; Rscript ScriptForPaper4.R ',ind,' > logs/',listsubproc[[freehost]]$host,"_",name,'.log "')
+        cmd=paste0('ssh ',listsubproc[[freehost]]$host,' "cd ',getwd(),'; Rscript ScriptForPaper4.R ',ind,' ',expname,' > logs/',listsubproc[[freehost]]$host,"_",name,'.log "')
         system(cmd,ignore.stderr=T,wait=F)
 
         print(paste("expe",name,"launched on",listsubproc[[freehost]]$host,"waiting for",outputname,"to finish"))
