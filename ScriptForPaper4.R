@@ -305,7 +305,7 @@ for(i in 3:length(reports)){
 OUT<-list(mod_concerns,mod_exps,mod_infs,mod_hosps,mod_recovers,mod_deaths,mod_cases,mod_newcases,mod_rdeaths,mod_incs)
 names(OUT)<-c("concern","exps","infs","hosps","recovers","deaths","cases","newcases","repdeaths","reports")
 
-saveRDS(OUT, paste0(path2,tparams2$id,".RDS"))
+saveRDS(OUT, file.path(path2,paste0(tparams2$id,".RDS")))
 
 ###################################
 ###################################
