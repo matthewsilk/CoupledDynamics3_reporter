@@ -5,7 +5,7 @@ args=commandArgs(trailingOnly = TRUE) #pass name of the file with arguments
 expname=args[1] #first argument is the line to be read in the file storing the parameters.
 
 listsubproc=generateListSubproc("hostandprocs.csv")
-folder_res=file.path(expname) #folder where all results will be store, should be the same than the one used in ScriptForPaper4.R, should pass that by arguments to both this script and ScriptForPaper4.R script
+folder_res=expname #folder where all results will be store, should be the same than the one used in ScriptForPaper4.R, should pass that by arguments to both this script and ScriptForPaper4.R script
 dir.create(folder_res, showWarnings = FALSE)
 p=read.csv("fullparams.csv")
 ids=p$id
