@@ -276,24 +276,18 @@ for(i in 1:length(statuses)){
 }
 
 mod_cases<-matrix(0,nr=10,nc=length(statuses))
-for(i in 3:length(reports)){
-  mod_cases[,i]<-aggregate(reports[[i]][[1]],by=list(pop_info$comms),sum)[,2]
-}
-
 mod_newcases<-matrix(0,nr=10,nc=length(statuses))
-for(i in 3:length(reports)){
-  mod_newcases[,i]<-aggregate(reports[[i]][[5]],by=list(pop_info$comms),sum)[,2]
-}
-
 mod_rdeaths<-matrix(0,nr=10,nc=length(statuses))
-for(i in 3:length(reports)){
-  mod_rdeaths[,i]<-aggregate(reports[[i]][[4]],by=list(pop_info$comms),sum)[,2]
-}
-
 mod_incs<-matrix(0,nr=10,nc=length(statuses))
-for(i in 3:length(reports)){
+
+for(i in (tparams2$delay+2):length(reports)){
+  mod_cases[,i]<-aggregate(reports[[i]][[1]],by=list(pop_info$comms),sum)[,2]
+  mod_newcases[,i]<-aggregate(reports[[i]][[5]],by=list(pop_info$comms),sum)[,2]
+  mod_rdeaths[,i]<-aggregate(reports[[i]][[4]],by=list(pop_info$comms),sum)[,2]
   mod_incs[,i]<-aggregate(reports[[i]][[6]],by=list(pop_info$comms),sum)[,2]
 }
+
+
 
 OUT<-list(mod_concerns,mod_exps,mod_infs,mod_hosps,mod_recovers,mod_deaths,mod_cases,mod_newcases,mod_rdeaths,mod_incs)
 names(OUT)<-c("concern","exps","infs","hosps","recovers","deaths","cases","newcases","repdeaths","reports")
