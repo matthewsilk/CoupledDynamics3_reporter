@@ -218,7 +218,7 @@ for(t in 2:time){
       reports[[t]]<-repo
     }
     if(t>(tparams2$delay+2)){
-      repo<-nreporter(statuses=statuses,t=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
+      repo<-nreporter(statuses=statuses,t2=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
       incs <- repo$incs
       reports[[t]]<-repo
     }
