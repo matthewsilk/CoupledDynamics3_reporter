@@ -100,7 +100,7 @@ nreporter<-function(statuses,t2=t,pop_size,comms,type=c("C","NC","H","HC","D"),l
       incs<-rep(eff2*sum(ttrd),pop_size)
     }
     
-    print(ttp2)
+    #print(ttp2)
     out<-list(tp,tn,td,trd,ttp2,incs)
     names(out)<-c("tp","tn","td","trd","ttp2","incs")
     return(out)
