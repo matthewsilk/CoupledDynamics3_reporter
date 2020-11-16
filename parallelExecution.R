@@ -38,7 +38,7 @@ for(ind in 1:518400){
         listsubproc[[freehost]]$file=outputname
         listsubproc[[freehost]]$free=FALSE
 
-        cmd=paste0('ssh ',listsubproc[[freehost]]$host,' "cd ',getwd(),'; Rscript ScriptForPaper4.R ',ind,' ',expname,' > logs/',listsubproc[[freehost]]$host,"_",name,'.log "')
+        cmd=paste0('ssh ',listsubproc[[freehost]]$host,' "cd ',getwd(),'; Rscript ScriptForPaper4.R ',ind,' ',expname,' 1> logs/',listsubproc[[freehost]]$host,"_",name,'.log',' 2> logs/',listsubproc[[freehost]]$host,"_",name,'.err "')
         system(cmd,ignore.stderr=T,wait=F)
 
         print(paste("expe",name,"launched on",listsubproc[[freehost]]$host,"waiting for",outputname,"to finish"))
