@@ -93,7 +93,7 @@ nreporter<-function(statuses,t2=t,pop_size,comms,type=c("C","NC","H","HC","D"),l
       incs<-rep(eff2*sum(hosps[,2]),pop_size)
     }
     if(type=="HC"){
-      incs<-rep(eff*as.numeric(sum(hosps[,2])>=hosp_cap&sum(hospsp[,2])<hosp_cap),pop_size/length(unique(comms)))
+      incs<-rep(eff*as.numeric(sum(hosps[,2])>=hosp_cap&sum(hospsp[,2])<hosp_cap),pop_size)
     }
     if(type=="D"){
       eff2<-eff/length(unique(comms))
