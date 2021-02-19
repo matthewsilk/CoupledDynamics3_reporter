@@ -11,7 +11,7 @@ p=read.csv("fullparams.csv")
 ids=p$id
 rm(p)
 
-for(ind in 1:518400){
+for(ind in 1:224640){
 
     i=ids[ind]
     name=paste0(i) #name of the simulation (should be unique)
