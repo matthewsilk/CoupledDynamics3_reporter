@@ -7,11 +7,11 @@ expname=args[1] #first argument is the line to be read in the file storing the p
 listsubproc=generateListSubproc("hostandprocs.csv")
 folder_res=expname #folder where all results will be store, should be the same than the one used in ScriptForPaper4.R, should pass that by arguments to both this script and ScriptForPaper4.R script
 dir.create(folder_res, showWarnings = FALSE)
-p=read.csv("fullparams.csv")
+p=read.csv("fullparams2.csv")
 ids=p$id
 rm(p)
 
-for(ind in 1:224640){
+for(ind in 1:length(ids)){
 
     i=ids[ind]
     name=paste0(i) #name of the simulation (should be unique)
