@@ -93,7 +93,7 @@ for( m in c("infs","cases","deaths")){
             for( t in unique(fp$type)){
                 fpb=getSubset(fp,bquote(eff>.1&RE==.(r)&type==.(t)&level==.(l)))
                 title=paste0("Type=",t,", level=",l,",RE=",r,"eff>.1")
-                png(file.path(imgfold,paste("reporting",l,"type",t,"RE",r,"effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+                png(file.path(imgfold,paste("reporting",l,"type",t,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
                 plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="delay")
                 dev.off()
             }
@@ -106,16 +106,14 @@ for( m in c("infs","cases","deaths")){
     for( l in unique(fp$level)){
         for( r in unique(fp$RE)){
             for( d in unique(fp$delay)){
-                fpb=getSubset(fp,bquote(eff>1&RE==.(r)&delay==.(d)&level==.(l)))
-                dev.off()
+                fpb=getSubset(fp,bquote(eff>.1&RE==.(r)&delay==.(d)&level==.(l)))
                 title=paste0("Delay=",d,", level=",l,",RE=",r,"eff>.1")
-                png(file.path(imgfold,paste("reporting",l,"delay",d,"RE",r,"effectOfTYPEon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+                png(file.path(imgfold,paste("reporting",l,"delay",d,"RE",r,"effSUP01effectOfTYPEon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
                 plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="type")
                 dev.off()
             }
         }
     }
 }
-
 
 
