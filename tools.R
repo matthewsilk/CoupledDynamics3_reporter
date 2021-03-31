@@ -2,30 +2,54 @@
 #@param param a dataframe with at least the path to the output of the simultion a a column attributing the value of  _var_ for each simulationj
 #@param measure which measure do we want (in "concern"   "exps"      "infs"      "hosps"     "recovers"  "deaths"    "cases" "newcases" "repdeaths" "reports" )
 #@param metrics  
-getDataTrajByVar <- function(param,measure="cases",metric="colSums",var,var2=NULL){
+#@param metrics  
+#@param maxt longest simulation time expected, if NULL this will correspond to the time of longest simulations within the one selected.
+getDataTrajByVar <- function(param,measure="cases",maxt=NULL,metric="colSums",var,probs=c(.25,.50,.75)){
     allsim=sapply(param$id,function(i)getAllInf(i,measure,metric)) #get all 
-
-    ##concacaten
+    if(is.null(maxt))maxt=max(lengths(allsim)) #get the longest simulation time
+    ##concacatenate all simulation using "var"
     allvar=lapply(unique(param[[var]]),function(v){
                   subset=allsim[param[[var]]==v]
-                  sapply(1:maxx,function(t)tryCatch(quantile(sapply(subset,"[",t),na.rm=T),error=function(e)rep(NA,5)))
+                  sapply(1:maxt,function(t)tryCatch(quantile(sapply(subset,"[",t),probs=probs,na.rm=T),error=function(e)rep(NA,length(probs))))
     })
-
-    maxx=max(lengths(allsim))
-    rangey=range(allsim)
-    cls=alpha(1:length(unique(param[[var]])),.5)
-    names(cls)=as.character(unique(param[[var]]))
-    plot(1,1,type="n",ylim=rangey,xlim=c(1,maxx))
-    lapply(seq_along(allvar),function(l)lines(allvar[[l]][3,],col=cls[l]))
-    lapply(seq_along(allvar),function(l)lines(allvar[[l]][2,],col=cls[l],lty=2))
-    lapply(seq_along(allvar),function(l)lines(allvar[[l]][4,],col=cls[l],lty=2))
+    names(allvar)=unique(param[[var]])
     return(allvar)
+
 }
+
+whenpeak <- function(d)which.max(colSums(d))
+peak <- function(d)max(colSums(d))
+sd_peak <- function(d)sd(apply(d,1,which.max)) #variation in community peak
+
+
+
+#@param df a datafram
+#@param exp an expression as returned by expression or bquote or quote  
+getSubset <- function(df,exp)return(subset(df,eval(exp)))
+
+
 #@param param a dataframe with at least the path to the output of the simultion a a column attributing the value of  _var_ for each simulationj
 #@param measure which measure do we want (in "concern"   "exps"      "infs"      "hosps"     "recovers"  "deaths"    "cases" "newcases" "repdeaths" "reports" )
 #@param metrics  
+plotTrajByVar <- function(summaries,cls=NULL,maxt=NULL,posl="topright",add=F,legend=F){
+    if(is.null(cls)){
+        cls=adjustcolor(1:length(summaries),.5)
+        names(cls)=names(summaries)
+    }
+    rangey=range(summaries)
+    if(!add)plot(1,1,type="n",ylim=rangey,xlim=c(1,ncol(summaries[[1]]))) 
+    lapply(seq_along(summaries),function(l)lines(summaries[[l]][2,],col=cls[l]))
+    lapply(seq_along(summaries),function(l)lines(summaries[[l]][1,],col=cls[l],lty=2))
+    lapply(seq_along(summaries),function(l)lines(summaries[[l]][3,],col=cls[l],lty=2))
+    if(legend)legend(posl,legend=unique(names(summaries)),col=cls,lwd=1)
+}
+
+#@param param a dataframe with at least the path to the output of the simultion a a column attributing the value of  _var_ for each simulationj
+#@param measure which measure do we want (in "concern"   "exps"      "infs"      "hosps"     "recovers"  "deaths"    "cases" "newcases" "repdeaths" "reports" )
+#@param metrics a function to be used to retreave a metrics :w
+
 getUniqueMetrics <- function(param,measure="cases",metric="max"){
-    sapply(param$id,function(i)get(metric)(getAllInf(i,measure,metric))) 
+    sapply(param$id,function(i)getAllInf(i,measure,metric))
 }
 
 #' Return simulation output from a given expe id
@@ -53,29 +77,5 @@ updateid <- function(id,resfold="")file.path(resfold,id)
 getAllInf <- function(id,measure="recovers",metrics="identity"){
     get(metrics)(getData(id)[[measure]])
 }
-
-
-fp<-read.csv("fullparams2.csv")
-exist=sapply(fp$id,simExist,resfold="strongerRespLowerTest")
-print(paste(sum(!exist),"simulations haven't been run"))
-fp=fp[sapply(fp$id,simExist,resfold="strongerRespLowerTest"),] #remove the 15 inexisting simulations (why do we have some?), I guess this is my fault and it shouldn't be hard to 
-
-
-test=getData(fp$id[1],"strongerRespLowerTest") #get one simu from a specific folder
-
-fp$id=sapply(fp$id,updateid,"strongerRespLowerTest") #update id, we don't need to pass it to other function anymor
-
-par(mfrow=c(2,2))
-for(tpe in unique(fp$type)){
-    net1=fp[fp$type==tpe,]
-    net1=cbind(net1,peakcase=getUniqueMetrics(net1,"cases","max"))
-    net1=cbind(net1,whenpeak=getUniqueMetrics(net1,"cases","which.max"))
-    boxplot(net1$peakcase ~ net1$delay * net1$Pr)
-}
-
-m=getDATA(net1,var="delay")
-
-
-
 
 
