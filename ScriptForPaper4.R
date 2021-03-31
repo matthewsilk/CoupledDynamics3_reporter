@@ -15,7 +15,7 @@ source(paste0(path0,"FunctionsForPaper4.R"))
 source(paste0(path0,"new_reporter.R"))
 
 params1<-read.csv(paste0(path0,"model_params.csv"))
-params2<-read.csv(paste0(path0,"fullparams.csv"))
+params2<-read.csv(paste0(path0,"fullparams2.csv"))
 params2<-params2[,2:ncol(params2)]
 
 tparams2<-params2[ind,]
