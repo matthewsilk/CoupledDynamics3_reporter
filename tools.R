@@ -45,16 +45,16 @@ plotTrajByVar <- function(summaries,cls=NULL,maxt=NULL,posl="topright",add=F,leg
 }
 
 #@param param a dataframe with at least the path to the output of the simultion a a column attributing the value of  _var_ for each simulationj
-#@param measure which measure do we want (in "concern"   "exps"      "infs"      "hosps"     "recovers"  "deaths"    "cases" "newcases" "repdeaths" "reports" )
-#@param metrics a function to be used to retreave a metrics :w
-
-getUniqueMetrics <- function(param,measure="cases",metric="max"){
-    sapply(param$id,function(i)getAllInf(i,measure,metric))
+#' @param measures one or more measure stored in a simulation
+#' @param metrics one or more functions that can be applied to retrieve information from the simulations
+getUniqueMetrics <- function(param,measures="cases",metrics="max"){
+    sapply(param$id,function(i)getAllInf(i,measures,metrics))
 }
 
 #' Return simulation output from a given expe id
 #' @param id the id of the experiment
 #' @param resfold a folder where results are stored
+#' @return a list of matrices that store the ouptu of a simulation 
 getData <- function(id,resfold=""){
     if(resfold=="")
         return(readRDS(paste0(id,".RDS")))
@@ -65,6 +65,7 @@ getData <- function(id,resfold=""){
 #' Return list of true false if files exist
 #' @param id the id of the experiment
 #' @param resfold a folder where results are stored
+#' @return a boolean which is TRUE if the result of the simulation  \code{id} exists, FALSE if not
 simExist <- function(id,resfold=""){
     file.exists(paste0(file.path(resfold,id),".RDS"))
 }
@@ -72,10 +73,16 @@ simExist <- function(id,resfold=""){
 #' change the ids to store the whole path of the simu
 #' @param id the id of the experiment
 #' @param resfold a folder where results are stored
+#' @return a string with a full path to a simulation ouptut (could it be merge with simExist? a string if exist, FALSE-NA if not?)
 updateid <- function(id,resfold="")file.path(resfold,id)
 
-getAllInf <- function(id,measure="recovers",metrics="identity"){
-    get(metrics)(getData(id)[[measure]])
+#' Get a certain element of the list of result and apply function to it
+#' @param id the id of the experiment
+#' @param measures one or more measure stored in a simulation
+#' @param metrics one or more functions that can be applied to retrieve information from the simulations
+#' @return the shape of the results depends on the values returns by the functions metrics. If all function in metrics return a unique elments thus \code{getAllInf} return a matrice of \code{dim=c(length(measures),length(metrics))
+getAllInf <- function(id,measures="recovers",metrics="identity"){
+    sapply(metrics,function(m)sapply(getData(id)[measures],m))
 }
 
 
