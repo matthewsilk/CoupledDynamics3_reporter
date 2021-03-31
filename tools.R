@@ -92,3 +92,24 @@ getAllInf <- function(id,measures="recovers",metrics="identity"){
 }
 
 
+plotQuick2plots <- function(df,measures="infs",metrics=c("peak","sd_peak"),var="type",palcol=NULL,main=NULL){
+    varval=unique(df[[var]])
+
+    traject=getDataTrajByVar(df,measures,var=var) 
+    data=getMetrics(fpb,measures,metrics)
+   
+    par(mfrow=c(1,2),oma=c(0,0,1,0))
+    if(is.null(palcol))cols=2:(length(varval)+1)
+    else cols=pal(length(varval))
+    names(cols)=as.character(varval)
+
+    plot(data,col=adjustcolor(cols[as.character(df[[var]])],.1),pch=16)
+    legend("topright",col=cols,legend=paste(var,names(cols)),pch=16)
+
+    plotTrajByVar(traject,cls=cols)
+    legend("topright",col=cols,legend=paste(var,names(cols)),lwd=1)
+
+    if(is.null(main))main=paste(paste0(metrics,collapse=" and "),"of",measures,"for different",var)
+    mtext(main,3,-2,outer=T,cex=1.2)
+    par(mfrow=c(1,1),oma=rep(0,4))
+}
