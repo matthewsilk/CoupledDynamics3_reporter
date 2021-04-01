@@ -3,11 +3,22 @@ source("tools.R")
 
 ## get parameters and clean
 fp<-read.csv("fullparams2.csv")
-exist=sapply(fp$id,simExist,resfold="strongerRespLowerTest")
+
+folderNewExpe="strongerRespLowerTest"
+exist=sapply(fp$id,simExist,resfold=folderNewExpe)
 print(paste(sum(!exist),"simulations haven't been run"))
-fp=fp[sapply(fp$id,simExist,resfold="strongerRespLowerTest"),] #remove the 15 inexisting simulations (why do we have some?), I guess this is my fault and it shouldn't be hard to 
-fp$id=sapply(fp$id,updateid,"strongerRespLowerTest") #update id, this way the good path is stored in `fp` and we don't need to pass the folder of the experiments to the other functions
+fp=fp[sapply(fp$id,simExist,resfold=folderNewExpe),] #remove the 15 inexisting simulations (why do we have some?), I guess this is my fault and it shouldn't be hard to 
+fp$id=sapply(fp$id,updateid,folderNewExpe) #update id, this way the good path is stored in `fp` and we don't need to pass the folder of the experiments to the other functions
 ####
+
+folderOldExp="firstExp/biggeroutput/"
+fp2<-read.csv("fullparams2.csv")
+exist=sapply(fp2$id,simExist,resfold=folderOldExp)
+print(paste(sum(!exist),"simulations haven't been run"))
+fp2=fp2[sapply(fp2$id,simExist,resfold=folderOldExp),] #remove the 15 inexisting simulations (why do we have some?), I guess this is my fault and it shouldn't be hard to 
+fp2$id=sapply(fp2$id,updateid,folderOldExp) #update id, this way the good path is stored in `fp2` and we don't need to pass the folder of the experiments to the other functions
+
+fp=rbind(fp,fp2) merging both
 
 ## the simplest test to check one simulation:
 test=getData(fp$id[1]) #get one simu from a specific folder
