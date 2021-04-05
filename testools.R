@@ -12,13 +12,13 @@ fp$id=sapply(fp$id,updateid,folderNewExpe) #update id, this way the good path is
 ####
 
 folderOldExp="firstExp/biggeroutput/"
-fp2<-read.csv("fullparams2.csv")
+fp2<-read.csv("fullparams.csv")
 exist=sapply(fp2$id,simExist,resfold=folderOldExp)
 print(paste(sum(!exist),"simulations haven't been run"))
 fp2=fp2[sapply(fp2$id,simExist,resfold=folderOldExp),] #remove the 15 inexisting simulations (why do we have some?), I guess this is my fault and it shouldn't be hard to 
 fp2$id=sapply(fp2$id,updateid,folderOldExp) #update id, this way the good path is stored in `fp2` and we don't need to pass the folder of the experiments to the other functions
 
-fp=rbind(fp,fp2) merging both
+fp=rbind(fp,fp2) #merging both
 
 ## the simplest test to check one simulation:
 test=getData(fp$id[1]) #get one simu from a specific folder
@@ -101,12 +101,18 @@ plotQuick2plots(fpb,measures="deaths",metrics=c("whenpeak","sd_peak"),var="type"
 for( m in c("infs","cases","deaths")){
     for( l in unique(fp$level)){
         for( r in unique(fp$RE)){
+            for( e in unique(fp$eff)){
             for( t in unique(fp$type)){
-                fpb=getSubset(fp,bquote(eff>.1&RE==.(r)&type==.(t)&level==.(l)))
-                title=paste0("Type=",t,", level=",l,",RE=",r,"eff>.1")
-                png(file.path(imgfold,paste("reporting",l,"type",t,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+            for( p in unique(fp$Ps)){
+                fpb=getSubset(fp,bquote(Ps==.(p)&eff==.(e)&RE==.(r)&type==.(t)&level==.(l)))
+                title=paste0("Type=",t,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
+                tryCatch({
+                png(file.path(imgfold,paste("reporting",l,"type",t,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
                 plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="delay")
                 dev.off()
+                },error=function(e){print(paste("PROBLEM WITH:",title));dev.off()})
+            }
+            }
             }
         }
     }
@@ -117,11 +123,17 @@ for( m in c("infs","cases","deaths")){
     for( l in unique(fp$level)){
         for( r in unique(fp$RE)){
             for( d in unique(fp$delay)){
-                fpb=getSubset(fp,bquote(eff>.1&RE==.(r)&delay==.(d)&level==.(l)))
-                title=paste0("Delay=",d,", level=",l,",RE=",r,"eff>.1")
-                png(file.path(imgfold,paste("reporting",l,"delay",d,"RE",r,"effSUP01effectOfTYPEon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+            for( e in unique(fp$eff)){
+            for( p in unique(fp$Ps)){
+                fpb=getSubset(fp,bquote(Ps==.(p)&eff==.(e)&RE==.(r)&delay==.(d)&level==.(l)))
+                title=paste0("Delay=",d,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
+                tryCatch({
+                png(file.path(imgfold,paste("reporting",l,"delay",d,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfTYPEon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
                 plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="type")
                 dev.off()
+                },error=function(e)print(paste("PROBLEM WITH:",title)))
+            }
+            }
             }
         }
     }
