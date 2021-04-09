@@ -99,43 +99,56 @@ plotQuick2plots(fpb,measures="deaths",metrics=c("whenpeak","sd_peak"),var="type"
 
 #now lets compare impact of delay for lot of different combination of other variables, results stile stored in folder "img"
 for( m in c("infs","cases","deaths")){
+    for( sc in unique(fp$SC)){
+        aw=sc
+    #for( aw in unique(fp$AW)){
     for( l in unique(fp$level)){
         for( r in unique(fp$RE)){
             for( e in unique(fp$eff)){
             for( t in unique(fp$type)){
             for( p in unique(fp$Ps)){
-                fpb=getSubset(fp,bquote(Ps==.(p)&eff==.(e)&RE==.(r)&type==.(t)&level==.(l)))
-                title=paste0("Type=",t,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
+                fpb=getSubset(fp,bquote(AW==.(aw)&SC==.(sc)&Ps==.(p)&eff==.(e)&RE==.(r)&type==.(t)&level==.(l)))
+                title=paste0("Type=",t,", AW=",aw,", SC=",sc,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
                 tryCatch({
-                png(file.path(imgfold,paste("reporting",l,"type",t,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
-                plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="delay")
+                png(file.path(imgfold,paste("AW",aw,"SC",sc,"reporting",l,"type",t,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+                plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="delay",alpha=.5)
                 dev.off()
-                },error=function(e){print(paste("PROBLEM WITH:",title));dev.off()})
+                },error=function(e){print(paste(e,"PROBLEM WITH:",title));dev.off()})
             }
             }
             }
         }
     }
+    #}
+    }
 }
 
 #same than before but instead of comparing different type of delay we compare different type of report
 for( m in c("infs","cases","deaths")){
+    for( sc in unique(fp$SC)){
+        aw=sc
+    #for( aw in unique(fp$AW)){
     for( l in unique(fp$level)){
         for( r in unique(fp$RE)){
             for( d in unique(fp$delay)){
             for( e in unique(fp$eff)){
             for( p in unique(fp$Ps)){
-                fpb=getSubset(fp,bquote(Ps==.(p)&eff==.(e)&RE==.(r)&delay==.(d)&level==.(l)))
-                title=paste0("Delay=",d,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
+                fpb=getSubset(fp,bquote(AW==.(aw)&SC==.(sc)&Ps==.(p)&eff==.(e)&RE==.(r)&delay==.(d)&level==.(l)))
+                title=paste0("Delay=",d,", AW=",aw,", SC=",sc,", Ps=",p,", eff=",e,", level=",l,",RE=",r)
                 tryCatch({
-                png(file.path(imgfold,paste("reporting",l,"delay",d,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfTYPEon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
-                plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="type")
+                png(file.path(imgfold,paste("AW",aw,"SC",sc,"reporting",l,"delay",d,"Ps",p,"eff",e,"RE",r,"effSUP01effectOfDELAYon",m,"count.png",sep="_")),width=800,height=600,pointsize=20)
+                plotQuick2plots(fpb,measures=m,metrics=c("peak","sd_peak"),main=title,var="type",alpha=.5)
                 dev.off()
-                },error=function(e)print(paste("PROBLEM WITH:",title)))
+                },error=function(e){
+                    print(paste(e,"PROBLEM WITH:",title))
+                    dev.off()
+                } )
             }
             }
             }
         }
+    #}
+    }
     }
 }
 
