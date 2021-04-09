@@ -39,7 +39,7 @@ plotTrajByVar <- function(summaries,cls=NULL,maxt=NULL,posl="topright",add=F,leg
         cls=adjustcolor(1:length(summaries),.5)
         names(cls)=names(summaries)
     }
-    rangey=range(summaries)
+    rangey=range(summaries,na.rm=T)
     if(!add)plot(1,1,type="n",xlab="time",ylab="",ylim=rangey,xlim=c(1,ncol(summaries[[1]]))) 
     lapply(seq_along(summaries),function(l)lines(summaries[[l]][2,],col=cls[l]))
     lapply(seq_along(summaries),function(l)lines(summaries[[l]][1,],col=cls[l],lty=2))
@@ -92,7 +92,7 @@ getAllInf <- function(id,measures="recovers",metrics="identity"){
 }
 
 
-plotQuick2plots <- function(df,measures="infs",metrics=c("peak","sd_peak"),var="type",palcol=NULL,main=NULL){
+plotQuick2plots <- function(df,measures="infs",metrics=c("peak","sd_peak"),var="type",palcol=NULL,main=NULL,alpha=.1){
     varval=unique(df[[var]])
 
     traject=getDataTrajByVar(df,measures,var=var) 
@@ -103,7 +103,7 @@ plotQuick2plots <- function(df,measures="infs",metrics=c("peak","sd_peak"),var="
     else cols=pal(length(varval))
     names(cols)=as.character(varval)
 
-    plot(data,col=adjustcolor(cols[as.character(df[[var]])],.1),pch=16)
+    plot(data,col=adjustcolor(cols[as.character(df[[var]])],alpha=alpha),pch=16,cex=.5)
     legend("topright",col=cols,legend=paste(var,names(cols)),pch=16)
 
     plotTrajByVar(traject,cls=cols)
