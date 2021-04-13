@@ -6,6 +6,7 @@ library(boot)
 args=commandArgs(trailingOnly = TRUE) #pass name of the file with arguments
 ind=args[1] #first argument is the line to be read in the file storing the parameters.
 expname=args[2] #first argument is the line to be read in the file storing the parameters.
+paramfile=args[3] #first argument is the line to be read in the file storing the parameters.
 
 path0<-""
 path1<-"networks2/"
@@ -15,7 +16,7 @@ source(paste0(path0,"FunctionsForPaper4.R"))
 source(paste0(path0,"new_reporter.R"))
 
 params1<-read.csv(paste0(path0,"model_params.csv"))
-params2<-read.csv(paste0(path0,"fullparams2.csv"))
+params2<-read.csv(paste0(path0,paramfile))
 params2<-params2[,2:ncol(params2)]
 
 tparams2<-params2[ind,]
