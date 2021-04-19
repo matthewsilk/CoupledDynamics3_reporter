@@ -20,5 +20,10 @@ You can then use `parallelExecution.R` to loop over all lines of the file `param
 ```bash
 Rscript parallelExecution.R expname paramfile hostfile > logAllruns #this logfile can be very big! 
 ```
+Where: 
+* `expname` the name of the experiment, output will be stored in a folder `./expname/`, logs for all run in `./logs_expname/`
+* `paramfile` a csv file with the parameters used for the run name of the experiment, with a column "id" used to name the simulations' output
+* `hostfile` a csv file with name of the host and number of experiment ber host
+
 
 
