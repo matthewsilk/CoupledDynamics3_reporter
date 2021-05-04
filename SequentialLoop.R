@@ -1,13 +1,18 @@
-library(rlist)
+old <- Sys.time() 
+#library(rlist)
 library(igraph)
 library(boot)
 
-path0<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/"
-path1<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/networks2/"
-path2<-"C:/Users/matth/Dropbox/NinaCollab_Covid/paper4_reportingscale/results/"
+args=commandArgs(trailingOnly = TRUE) #pass name of the file with arguments
+ind=args[1] #first argument is the line to be read in the file storing the parameters.
+expname=args[2] #first argument is the line to be read in the file storing the parameters.
+
+path0<-""
+path1<-"networks2/"
+path2<-expname
 
 source(paste0(path0,"FunctionsForPaper4.R"))
-source(paste0(path0,"community_testing_func.R"))
+source(paste0(path0,"new_reporter.R"))
 
 params1<-read.csv(paste0(path0,"model_params.csv"))
 params2<-read.csv(paste0(path0,"fullparams.csv"))
@@ -77,7 +82,7 @@ p_inf<-tparams2$p_inf
 l_inf<-tparams2$AW
 #and an additive effect used to calculate the same parameter for old adults
 l_inf_o<-0
-  
+
 start<-concern_setup(A_concern_y,B_concern_y,A_concern_o,B_concern_o,pop_info,info_mat)
 
 concern<-list()
@@ -156,11 +161,15 @@ time<-300
 statuses<-list()
 statuses[[1]]<-status
 
+reports<-list()
+reports[[1]]<-NULL
+
 progression<-matrix(0,nr=time+1,nc=ncol(status))
 progression[1,]<-colSums(status)
 
 ############################################
 
+print(paste0("start expe ", ind))
 #be ready to change the network in this
 for(t in 2:time){
   
@@ -200,34 +209,38 @@ for(t in 2:time){
     
     inf<-cbind(sign(statuses[[t-1]]$I2+statuses[[t-1]]$I3),sign(statuses[[t-1]]$I2+statuses[[t-1]]$I3))
     
-
+    
     if(t<(tparams2$delay+2) )
-		incs <- rep(0,pop_info$pop/length(unique(pop_info$comms)))
+      incs <- rep(0,pop_info$pop/length(unique(pop_info$comms)))
     if(t==(tparams2$delay+2) ){
-        repo<-reporter(statuses=statuses,t2=t,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=rep(0,pop_info$pop),tn=rep(0,pop_info$pop),td=rep(0,pop_info$pop),trd=rep(0,pop_info$pop))
-        incs <- repo$incs
+      repo<-nreporter(statuses=statuses,t2=t,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=rep(0,pop_info$pop),tn=rep(0,pop_info$pop),td=rep(0,pop_info$pop),trd=rep(0,pop_info$pop))
+      incs <- repo$incs
+      reports[[t]]<-repo
     }
     if(t>(tparams2$delay+2)){
-        repo<-reporter(statuses=statuses,t=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
-        incs <- repo$incs
+      repo<-nreporter(statuses=statuses,t2=t-1,pop_size=pop_info$pop,comms=pop_info$comms,type=tparams2$type,level=tparams2$level,mPps=tparams2$mPps,Ps=tparams2$Ps,Ph=tparams2$Ph,Pr=tparams2$Pr,Pd=tparams2$Pd,Precd=tparams2$Prd,delay=tparams2$delay,hosp_cap=tparams2$hc,eff=tparams2$eff,tp=repo$tp,tn=repo$tn,td=repo$td,trd=repo$trd)
+      incs <- repo$incs
+      reports[[t]]<-repo
     }
-
     current<-concern_timestepN(pop_info=pop_info,net_b=info_mat,net_d=dis_mat,belief=current[[1]],
                                concern=current[[2]],inf=inf,lA_ex,lB_ex,l_conc,l_conc_o,l_inf,
                                l_inf_o,l_hea,l_hea_o,p_inf=p_inf,incs=incs)
-
+    
     belief[[t]]<-current[[1]]
     concern[[t]]<-current[[2]]  
-
+    
     dis<-infection_timestep(pop_info=pop_info,status=statuses[[t-1]],net=dis_mat,d_exp=dis[[2]],d_inf1=dis[[3]],d_inf2=dis[[4]],d_inf3=dis[[5]],S_E=S_E,E_I1=E_I1,yI1_I2=yI1_I2,oI1_I2=oI1_I2,yI2_I3=yI2_I3,oI2_I3=oI2_I3,yI3_D=yI3_D,oI3_D=oI3_D,yI1_R=yI1_R,oI1_R=oI1_R,yI2_R=yI2_R,oI2_R=oI2_R,yI3_R=yI3_R,oI3_R=oI3_R)
   }
-  print(colSums(dis$status))
+  #print(colSums(dis$status))
   progression[t,]<-colSums(dis$status)
   statuses[[t]]<-dis$status
   
   if(sum(colSums(statuses[[t]])[c(2,3,4,5)])==0){break()}
   
 }
+
+print(paste("end expe", ind, " at time step:",t, "with SEIRD last count:"))
+print(colSums(dis$status))
 
 
 ########################################
@@ -257,27 +270,53 @@ for(i in 1:length(statuses)){
   mod_hosps[,i]<-aggregate(statuses[[i]][,5],by=list(pop_info$comms),sum)[,2]
 }
 
-OUT<-list(mod_concerns,mod_exps,mod_infs,mod_hosps)
-names(OUT)<-c("concern","exps","infs","hosps")
+mod_recovers<-matrix(0,nr=10,nc=length(statuses))
 
-saveRDS(OUT, paste0(path2,tparams2$id,".RDS"))
+for(i in 1:length(statuses)){
+  mod_recovers[,i]<-aggregate(statuses[[i]][,6],by=list(pop_info$comms),sum)[,2]
+}
+
+mod_deaths<-matrix(0,nr=10,nc=length(statuses))
+
+for(i in 1:length(statuses)){
+  mod_deaths[,i]<-aggregate(statuses[[i]][,7],by=list(pop_info$comms),sum)[,2]
+}
+
+mod_cases<-matrix(0,nr=10,nc=length(statuses))
+mod_newcases<-matrix(0,nr=10,nc=length(statuses))
+mod_rdeaths<-matrix(0,nr=10,nc=length(statuses))
+mod_incs<-matrix(0,nr=10,nc=length(statuses))
+
+for(i in (tparams2$delay+2):length(reports)){
+  mod_cases[,i]<-aggregate(reports[[i]][[1]],by=list(pop_info$comms),sum)[,2]
+  mod_newcases[,i]<-aggregate(reports[[i]][[5]],by=list(pop_info$comms),sum)[,2]
+  mod_rdeaths[,i]<-aggregate(reports[[i]][[4]],by=list(pop_info$comms),sum)[,2]
+  mod_incs[,i]<-aggregate(reports[[i]][[6]],by=list(pop_info$comms),sum)[,2]
+}
+
+OUT<-list(mod_concerns,mod_exps,mod_infs,mod_hosps,mod_recovers,mod_deaths,mod_cases,mod_newcases,mod_rdeaths,mod_incs)
+names(OUT)<-c("concern","exps","infs","hosps","recovers","deaths","cases","newcases","repdeaths","reports")
+
+saveRDS(OUT, file.path(path2,paste0(tparams2$id,".RDS")))
 
 ###################################
 ###################################
 
-cols=c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499")
+#cols=c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499")
+#
+#plot(NULL,xlim=c(0,250),ylim=c(0,1))
+#for(i in 1:10){
+#  lines(x=seq(1,length(concern)),y=mod_concerns[i,],col=cols[i],lwd=3)
+#}
+#
+#plot(NULL,xlim=c(0,250),ylim=c(0,50))
+#for(i in 1:10){
+#  lines(x=seq(1,length(statuses)),y=mod_infs[i,],col=cols[i],lwd=3)
+#}
 
-plot(NULL,xlim=c(0,250),ylim=c(0,1))
-for(i in 1:10){
-  lines(x=seq(1,length(concern)),y=mod_concerns[i,],col=cols[i],lwd=3)
-}
 
-plot(NULL,xlim=c(0,250),ylim=c(0,50))
-for(i in 1:10){
-  lines(x=seq(1,length(statuses)),y=mod_infs[i,],col=cols[i],lwd=3)
-}
-
-
+new <- Sys.time() - old # calculate difference
+print(new) # print in nice format
 
 
 
