@@ -3,7 +3,7 @@
 To run one single simulation suing a given set of parameters store in `paramfile`:
 
 ```bash
-Rscript ScriptForPaper4.R N expname paramfile
+Rscript uniqueRun.R N expname paramfile
 ```
 
 Where: 
